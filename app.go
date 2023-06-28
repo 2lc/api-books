@@ -172,7 +172,7 @@ func putBooks(ctx *gin.Context) {
 	ctx.IndentedJSON(http.StatusOK, gin.H{"message": messages})
 
 	if i < 0 {
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"Failed": "Book NOT created, verify structure of request."})
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"Failed": "Book NOT created, verify the request."})
 	}
 }
 
@@ -220,7 +220,7 @@ func patchBook(ctx *gin.Context) {
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"Failed": "Book NOT created, verify structure of request."})
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"Failed": "Book NOT created, verify the request."})
 	} else {
 		msg := fmt.Sprintf("Book %s altered successfully", isbn)
 		ctx.IndentedJSON(http.StatusOK, gin.H{"success": msg})
