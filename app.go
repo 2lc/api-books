@@ -36,7 +36,7 @@ func main() {
 	router.PUT("/books", putBooks)
 	router.PATCH("/books/:isbn", patchBook)
 	router.DELETE("/books/:isbn", deleteBook)
-	log.Fatal(router.Run("localhost:8080"))
+	log.Fatal(router.Run())
 
 }
 
