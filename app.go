@@ -41,8 +41,8 @@ func main() {
 }
 
 func DBConn() (*sql.DB, error) {
-	//db, err := sql.Open("postgres", "postgres://postgres:masterkey@localhost/bookstore?sslmode=disable")
-	db, err := sql.Open("postgres", "postgres://lcabral:T1QvJENu632ivVN56RuPjxXmQ2WlPOz4@dpg-ciatfc18g3nden787760-a.ohio-postgres.render.com/app_db_4wzw")
+	db, err := sql.Open("postgres", "postgres://lcabral:T1QvJENu632ivVN56RuPjxXmQ2WlPOz4@dpg-ciatfc18g3nden787760-a/app_db_4wzw")
+	//db, err := sql.Open("postgres", "postgres://lcabral:T1QvJENu632ivVN56RuPjxXmQ2WlPOz4@dpg-ciatfc18g3nden787760-a.ohio-postgres.render.com/app_db_4wzw")
 	if err != nil {
 		return db, err
 	}
