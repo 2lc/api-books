@@ -4,12 +4,18 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
+
+type Data struct {
+	Title string
+	Body  string
+}
 
 type Book struct {
 	ISBN   string  `json:"isbn"`
@@ -26,6 +32,8 @@ type msgBook struct {
 	ISBN    string `json:"isbn"`
 	MESSAGE string `json:"message"`
 }
+
+var templates = template.Must(template.ParseGlob("templates/*"))
 
 func main() {
 
@@ -52,6 +60,24 @@ func DBConn() (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func renderTemplate(w http.ResponseWriter, tmpl string, page *Data) {
+	err := templates.ExecuteTemplate(w, tmpl, page)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	page := &Data{Title: "Home page", Body: "Welcome to our brand new home page."}
+	renderTemplate(w, "index", page)
+}
+
+func AboutHandler(w http.ResponseWriter, r *http.Request) {
+	page := &Data{Title: "About page", Body: "This is our brand new about page."}
+	renderTemplate(w, "index", page)
 }
 
 func getBooks(ctx *gin.Context) {
