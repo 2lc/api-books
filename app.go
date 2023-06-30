@@ -38,6 +38,8 @@ var templates = template.Must(template.ParseGlob("templates/*"))
 func main() {
 
 	router := gin.Default()
+	router.GET("/", IndexHandler)
+	router.GET("/about/", AboutHandler)
 	router.GET("/books", getBooks)
 	router.GET("/books/:isbn", getBookByID)
 	router.POST("/books", postBooks)
@@ -62,22 +64,22 @@ func DBConn() (*sql.DB, error) {
 	return db, nil
 }
 
-func renderTemplate(w http.ResponseWriter, tmpl string, page *Data) {
-	err := templates.ExecuteTemplate(w, tmpl, page)
+func renderTemplate(ctx *gin.Context, tmpl string, page *Data) {
+	err := templates.ExecuteTemplate(ctx.Writer, tmpl, page)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(ctx.Writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
+func IndexHandler(ctx *gin.Context) {
 	page := &Data{Title: "Home page", Body: "Welcome to our brand new home page."}
-	renderTemplate(w, "index", page)
+	renderTemplate(ctx, "index", page)
 }
 
-func AboutHandler(w http.ResponseWriter, r *http.Request) {
+func AboutHandler(ctx *gin.Context) {
 	page := &Data{Title: "About page", Body: "This is our brand new about page."}
-	renderTemplate(w, "index", page)
+	renderTemplate(ctx, "index", page)
 }
 
 func getBooks(ctx *gin.Context) {
