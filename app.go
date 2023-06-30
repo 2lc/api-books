@@ -39,6 +39,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/", IndexHandler)
+	router.GET("/auth/", AuthHandler)
 	router.GET("/about/", AboutHandler)
 	router.GET("/books", getBooks)
 	router.GET("/books/:isbn", getBookByID)
@@ -75,6 +76,10 @@ func renderTemplate(ctx *gin.Context, tmpl string, page *Data) {
 func IndexHandler(ctx *gin.Context) {
 	page := &Data{Title: "Home page", Body: "Welcome to our brand new home page."}
 	renderTemplate(ctx, "index", page)
+}
+func AuthHandler(ctx *gin.Context) {
+	page := &Data{Title: "Login page", Body: "Login"}
+	renderTemplate(ctx, "auth", page)
 }
 
 func AboutHandler(ctx *gin.Context) {
