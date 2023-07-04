@@ -15,6 +15,8 @@ import (
 type Data struct {
 	Title string
 	Body  string
+	Path string
+	Action string
 }
 
 type Book struct {
@@ -40,6 +42,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/", IndexHandler)
 	router.GET("/auth/", AuthHandler)
+	router.GET("/register/", RegisterHandler)
 	router.GET("/about/", AboutHandler)
 	router.GET("/books", getBooks)
 	router.GET("/books/:isbn", getBookByID)
@@ -74,16 +77,22 @@ func renderTemplate(ctx *gin.Context, tmpl string, page *Data) {
 }
 
 func IndexHandler(ctx *gin.Context) {
-	page := &Data{Title: "Home page", Body: "Welcome to our brand new home page."}
+	page := &Data{Title: "Home page", Body: "Welcome to our brand new home page.", Path: "/", Action: "Login"}
 	renderTemplate(ctx, "index", page)
 }
+
 func AuthHandler(ctx *gin.Context) {
-	page := &Data{Title: "Login page", Body: "Login"}
+	page := &Data{Title: "Login page", Body: "Authentication - Login", Path: ctx.FullPath(), Action: "Sign In"}
+	renderTemplate(ctx, "auth", page)
+}
+
+func RegisterHandler(ctx *gin.Context) {
+	page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register"}
 	renderTemplate(ctx, "auth", page)
 }
 
 func AboutHandler(ctx *gin.Context) {
-	page := &Data{Title: "About page", Body: "This is our brand new about page."}
+	page := &Data{Title: "About page", Body: "This is our brand new about page.", Path: ctx.FullPath(), Action: "Home"}
 	renderTemplate(ctx, "index", page)
 }
 
