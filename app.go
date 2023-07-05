@@ -44,6 +44,7 @@ func main() {
 	router.GET("/auth/", AuthHandler)
 	router.POST("/auth/", getBooks)
 	router.GET("/register/", RegisterHandler)
+	router.POST("/register/", postAccount)
 	router.GET("/about/", AboutHandler)
 	router.GET("/books", getBooks)
 	router.GET("/books/:isbn", getBookByID)
@@ -95,6 +96,39 @@ func RegisterHandler(ctx *gin.Context) {
 func AboutHandler(ctx *gin.Context) {
 	page := &Data{Title: "About page", Body: "This is our brand new about page.", Path: ctx.FullPath(), Action: "Home"}
 	renderTemplate(ctx, "index", page)
+}
+
+func postAccount(ctx *gin.Context) {
+	db, err := DBConn()
+	msg := ""
+
+	if err != nil {
+		ctx.HTML(http.StatusInternalServerError, "auth.html", err.Error())
+		return
+	}
+
+	//decodeJson := json.NewDecoder(ctx.Request.Body)
+	firstname := ctx.PostForm("firstname")
+	lastname := ctx.PostForm("lastname")
+	email := ctx.PostForm("email")
+	password := ctx.PostForm("password")
+
+	//err = decodeJson.Decode(&req)
+
+	if err != nil {
+		ctx.HTML(http.StatusInternalServerError, "auth.html", err.Error())
+		return
+	}
+	
+	_, err = db.Exec("INSERT INTO account VALUES($1, $2, $3, $4)", firstname, lastname, email, password)
+
+	if err != nil {
+		msg = err.Error()
+		ctx.HTML(http.StatusInternalServerError, "auth.html", msg)
+	} 
+
+	msg = fmt.Sprintf("Account %s created successfully", email)
+	ctx.HTML(http.StatusOK, "auth.html", msg)
 }
 
 func getBooks(ctx *gin.Context) {
