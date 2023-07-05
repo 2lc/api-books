@@ -2,57 +2,55 @@
 {{ template "header" . }}
 
 <body>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalForm">
-        Contact Us
-    </button>
-    <div class="modal fade bg-body" id="ModalForm" tabindex="-1" aria-labelledby="ModalFormLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content shadow">
-                <div class="modal-header">
-                    <h4 class="class=modal-title ms-3">{{.Body}}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-area">
-                        <form class="ms-3 me-3">
-                            <div class="mb-3 mt-4">
-                                <label for="exampleInputEmail1" class="form-label fw-lighter">Your Email</label>
-                                <input type="email" class="form-control" id="exampleInputEmail1"
-                                    aria-describedby="emailHelp">
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label fw-lighter">Your Password</label>
-                                <input type="password" class="form-control" id="exampleInputPassword1">
-                            </div>
-                            {{ if eq .Path "/register/" }}
-                            <div class="mb-3">
-                                <label for="exampleConfirmPassword1" class="form-label fw-lighter">Confirm Password</label>
-                                <input type="password" class="form-control" id="exampleConfirmPassword1">
-                            </div>
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow rounded-3">
+                    <form action="{{ .Path }}" method="POST" class="card-body p-4 text-center">
+                        <h3 class="mb-3">{{.Body}}</h3>
+                        {{ if eq .Path "/register/" }}
+                        <div class="form-outline mb-3 text-start">
+                            <label class="form-label ms-1 fw-lighter">First Name</label>
+                            <input type="text" id="firstname" class="form-control" />
+                        </div>
+                        <div class="form-outline mb-3 text-start">
+                            <label class="form-label ms-1 fw-lighter">Last Name</label>
+                            <input type="text" id="lastname" class="form-control" />
+                        </div>
+                        {{ end }}
+                        <div class="form-outline mb-3 text-start">
+                            <label class="form-label ms-1 fw-lighter">Email</label>
+                            <input type="email" id="email" class="form-control" />
+                        </div>
+                        <div class="form-outline mb-3 text-start">
+                            <label class="form-label ms-1 fw-lighter">Password</label>
+                            <input type="password" id="password" class="form-control" />
+                        </div>
+                        {{ if eq .Path "/register/" }}
+                        <div class="form-outline mb-3 ms-1 text-start">
+                            <label for="exampleConfirmPassword1" class="form-label fw-lighter">Confirm Password</label>
+                            <input type="password" class="form-control" id="exampleConfirmPassword1">
+                        </div>
+                        {{ end }}
+                        <div class="d-grid gap-2">
+                            <button type="submit"
+                                class="btn btn-block fw-bolder btn-primary mt-1 mb-3">{{.Action}}</button>
+                        </div>
+                        <div class="card-footer text-muted bg-body">
+                            {{ if eq .Path "/auth/" }}
+                            <span class="fw-lighter mt-2">Forgot password?</span>
+                            <a href="#!">Reset</a><br />
+                            <span class="fw-lighter">New here?</span>
+                            <a href="/register/">Create account</a>
+                            {{ else }}
+                            <span class="fw-lighter"> Already have an account?</span>
+                            <a href="/auth/">Login</a>
                             {{ end }}
-                            <div class="d-grid gap-2"><button type="submit"
-                                    class="btn btn-block fw-bolder btn-primary mb-3">{{.Action}}</button>
-                            </div>
-                            <div class="modal-footer">
-                                {{ if eq .Path "/auth/" }}
-                                <span class="fw-lighter">New here?</span>
-                                <a href="/register/">Create account</a>
-                                {{ else }}
-                                <span class="fw-lighter"> Already have an account?</span>
-                                <a href="/auth">Login</a>
-                                {{ end }}
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js"></script>
 </body>
-
-</html>
-
 {{end}}

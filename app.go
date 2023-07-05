@@ -42,6 +42,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/", IndexHandler)
 	router.GET("/auth/", AuthHandler)
+	router.POST("/auth/", getBooks)
 	router.GET("/register/", RegisterHandler)
 	router.GET("/about/", AboutHandler)
 	router.GET("/books", getBooks)
@@ -82,7 +83,7 @@ func IndexHandler(ctx *gin.Context) {
 }
 
 func AuthHandler(ctx *gin.Context) {
-	page := &Data{Title: "Login page", Body: "Authentication - Login", Path: ctx.FullPath(), Action: "Sign In"}
+	page := &Data{Title: "Login page", Body: "Authentication", Path: ctx.FullPath(), Action: "Sign Up"}
 	renderTemplate(ctx, "auth", page)
 }
 

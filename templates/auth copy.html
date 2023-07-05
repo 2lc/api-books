@@ -1,0 +1,59 @@
+{{ define "auth" }}
+{{ template "header" . }}
+
+<body>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalForm">
+        Contact Us
+    </button>
+    <div class="modal fade bg-body" id="ModalForm" tabindex="-1" aria-labelledby="ModalFormLabel" aria-hidden="true">
+    <div class="modal fade bg-body" id="ModalForm" tabindex="-1" aria-labelledby="ModalFormLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow">
+                <div class="modal-header">
+                    <h4 class="class=modal-title ms-3">{{.Body}}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-area">
+                        <form class="ms-3 me-3">
+                            <div class="mb-3 mt-4">
+                                <label for="exampleInputEmail1" class="form-label fw-lighter">Your Email</label>
+                                <input type="email" class="form-control" id="exampleInputEmail1"
+                                    aria-describedby="emailHelp">
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputPassword1" class="form-label fw-lighter">Your Password</label>
+                                <input type="password" class="form-control" id="exampleInputPassword1">
+                            </div>
+                            {{ if eq .Path "/register/" }}
+                            <div class="mb-3">
+                                <label for="exampleConfirmPassword1" class="form-label fw-lighter">Confirm Password</label>
+                                <input type="password" class="form-control" id="exampleConfirmPassword1">
+                            </div>
+                            {{ end }}
+                            <div class="d-grid gap-2"><button type="submit"
+                                    class="btn btn-block fw-bolder btn-primary mb-3">{{.Action}}</button>
+                            </div>
+                            <div class="modal-footer">
+                                {{ if eq .Path "/auth/" }}
+                                <span class="fw-lighter">New here?</span>
+                                <a href="/register/" data-bs-toggle="modal" data-bs-target="#ModalForm">Create account</a>
+                                {{ else }}
+                                <span class="fw-lighter"> Already have an account?</span>
+                                <a href="/auth" data-bs-toggle="modal" data-bs-target="#ModalForm">Login</a>
+                                {{ end }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
+{{end}}
