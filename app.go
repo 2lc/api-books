@@ -17,6 +17,7 @@ type Data struct {
 	Body  string
 	Path string
 	Action string
+	Message string
 }
 
 type Book struct {
@@ -57,8 +58,8 @@ func main() {
 }
 
 func DBConn() (*sql.DB, error) {
-	db, err := sql.Open("postgres", "postgres://lcabral:T1QvJENu632ivVN56RuPjxXmQ2WlPOz4@dpg-ciatfc18g3nden787760-a/app_db_4wzw")
-	//db, err := sql.Open("postgres", "postgres://lcabral:T1QvJENu632ivVN56RuPjxXmQ2WlPOz4@dpg-ciatfc18g3nden787760-a.ohio-postgres.render.com/app_db_4wzw")
+	//db, err := sql.Open("postgres", "postgres://lcabral:T1QvJENu632ivVN56RuPjxXmQ2WlPOz4@dpg-ciatfc18g3nden787760-a/app_db_4wzw")
+	db, err := sql.Open("postgres", "postgres://lcabral:T1QvJENu632ivVN56RuPjxXmQ2WlPOz4@dpg-ciatfc18g3nden787760-a.ohio-postgres.render.com/app_db_4wzw")
 	if err != nil {
 		return db, err
 	}
@@ -79,22 +80,22 @@ func renderTemplate(ctx *gin.Context, tmpl string, page *Data) {
 }
 
 func IndexHandler(ctx *gin.Context) {
-	page := &Data{Title: "Home page", Body: "Welcome to our brand new home page.", Path: "/", Action: "Login"}
+page := &Data{Title: "Home page", Body: "Welcome to our brand new home page.", Path: "/", Action: "Login", Message: ""}
 	renderTemplate(ctx, "index", page)
 }
 
 func AuthHandler(ctx *gin.Context) {
-	page := &Data{Title: "Login page", Body: "Authentication", Path: ctx.FullPath(), Action: "Sign Up"}
+	page := &Data{Title: "Login page", Body: "Authentication", Path: ctx.FullPath(), Action: "Sign Up", Message: ""}
 	renderTemplate(ctx, "auth", page)
 }
 
 func RegisterHandler(ctx *gin.Context) {
-	page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register"}
+	page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: ""}
 	renderTemplate(ctx, "auth", page)
 }
 
 func AboutHandler(ctx *gin.Context) {
-	page := &Data{Title: "About page", Body: "This is our brand new about page.", Path: ctx.FullPath(), Action: "Home"}
+	page := &Data{Title: "About page", Body: "This is our brand new about page.", Path: ctx.FullPath(), Action: "Home", Message: ""}
 	renderTemplate(ctx, "index", page)
 }
 
@@ -103,7 +104,9 @@ func postAccount(ctx *gin.Context) {
 	msg := ""
 
 	if err != nil {
-		ctx.HTML(http.StatusInternalServerError, "auth.html", err.Error())
+		msg =  err.Error()
+		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg}
+		renderTemplate(ctx, "auth", page)
 		return
 	}
 
@@ -112,23 +115,26 @@ func postAccount(ctx *gin.Context) {
 	lastname := ctx.PostForm("lastname")
 	email := ctx.PostForm("email")
 	password := ctx.PostForm("password")
-
-	//err = decodeJson.Decode(&req)
-
+ 
 	if err != nil {
-		ctx.HTML(http.StatusInternalServerError, "auth.html", err.Error())
+		msg = err.Error()
+		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg}
+		renderTemplate(ctx, "auth", page)
 		return
 	}
 	
 	_, err = db.Exec("INSERT INTO account VALUES($1, $2, $3, $4)", firstname, lastname, email, password)
+	//rows, err := db.Query("SELECT * FROM books")
 
 	if err != nil {
 		msg = err.Error()
-		ctx.HTML(http.StatusInternalServerError, "auth.html", msg)
+		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg}
+		renderTemplate(ctx, "auth", page)
+		return
 	} 
-
 	msg = fmt.Sprintf("Account %s created successfully", email)
-	ctx.HTML(http.StatusOK, "auth.html", msg)
+	page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg}
+	renderTemplate(ctx, "auth", page)
 }
 
 func getBooks(ctx *gin.Context) {
