@@ -29,7 +29,7 @@
                         {{ if eq .Path "/register/" }}
                         <div class="form-outline mb-3 ms-1 text-start">
                             <label for="exampleConfirmPassword1" class="form-label fw-lighter">Confirm Password</label>
-                            <input type="password" class="form-control" id="exampleConfirmPassword1">
+                            <input type="password" class="form-control requerid" id="exampleConfirmPassword1">
                         </div>
                         {{ end }}
                         <div class="d-grid gap-2">
@@ -51,10 +51,10 @@
                 </div>
             </div>
             {{ if .Message }}
-            <div class="alert alert-light alert-dismissible d-flex align-items-center position-absolute top-50 start-50 translate-middle col-md-5 col-md-offset-5"
+            <div class="alert alert-light alert-dismissible d-flex small align-items-center position-absolute top-40 start-50 translate-middle col-md-5 col-md-offset-5"
                 role="alert">
-                <svg class="bi flex-shrink-0 me-2" role="img" width="24" height="24" aria-label="Info:" fill="red"><use xlink:href="#sign-stop-fill"/></svg>
-                <div class="fw-lighter text-primary ms-1"><strong>{{ .Message }}</strong></div>
+                <svg class="bi flex-shrink-0 me-2" role="img" width="24" height="24" fill="{{ .Color }}"><use xlink:href="#{{ .Icon }}"/></svg>
+                <div class="ms-1">{{ .Message }}</div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {{ end }}

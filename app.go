@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 
+	"golang.org/x/crypto/bcrypt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
@@ -18,6 +19,8 @@ type Data struct {
 	Path string
 	Action string
 	Message string
+	Color string
+	Icon string
 }
 
 type Book struct {
@@ -43,7 +46,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/", IndexHandler)
 	router.GET("/auth/", AuthHandler)
-	router.POST("/auth/", getBooks)
+	router.POST("/auth/", postAuth)
 	router.GET("/register/", RegisterHandler)
 	router.POST("/register/", postAccount)
 	router.GET("/about/", AboutHandler)
@@ -69,6 +72,16 @@ func DBConn() (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func HashPassword(password string) (string, error) {
+    bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+    return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+    return err == nil
 }
 
 func renderTemplate(ctx *gin.Context, tmpl string, page *Data) {
@@ -99,13 +112,61 @@ func AboutHandler(ctx *gin.Context) {
 	renderTemplate(ctx, "index", page)
 }
 
+func postAuth(ctx *gin.Context) {
+	db, err := DBConn()
+	msg := ""
+	var pwd, firstname string
+
+	if err != nil {
+		msg =  err.Error()
+		page := &Data{Title: "Auth page", Body: "Authentication", Path: ctx.FullPath(), Action: "Sign Up", Message: msg, Color: "Crimson", Icon: "sign-stop-fill"}
+		renderTemplate(ctx, "auth", page)
+		return
+	}
+
+	//decodeJson := json.NewDecoder(ctx.Request.Body)
+
+	email := ctx.PostForm("email")
+	password := ctx.PostForm("password")
+ 
+	if err != nil {
+		msg = err.Error()
+		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg, Color: "Crimson", Icon: "sign-stop-fill"}
+		renderTemplate(ctx, "auth", page)
+		return
+	}
+	
+	if err := db.QueryRow("SELECT password, firstname FROM account WHERE email = $1", email).Scan(&pwd, &firstname); err != nil {
+        if err == sql.ErrNoRows {
+			msg = fmt.Sprintf("Email %s NÃO foi encontrado!",email)
+			page := &Data{Title: "Auth page", Body: "Authentication", Path: ctx.FullPath(), Action: "Sign Up", Message: msg, Color: "Gold", Icon: "exclamation-triangle-fill"}
+		    renderTemplate(ctx, "auth", page)
+			return
+        }
+		msg = fmt.Sprintf("Erro: %s", err.Error())
+		page := &Data{Title: "Auth page", Body: "Authentication", Path: ctx.FullPath(), Action: "Sign Up", Message: msg, Color: "Crimson", Icon: "sign-stop-fill"}
+		renderTemplate(ctx, "auth", page)
+		return
+    }
+    if CheckPasswordHash(password, pwd){
+    msg = fmt.Sprintf("Bem vindo, %s.", firstname)
+	page := &Data{Title: "Home page", Body: msg, Path: ctx.FullPath(), Action: "Logoff", Message: msg, Color: "DarkBlue", Icon: "info-fill"}
+	renderTemplate(ctx, "index", page)
+	} else{
+		msg = "E-mail ou senha incorretos, tente norvamente."
+		page := &Data{Title: "Auth page", Body: "Authentication", Path: ctx.FullPath(), Action: "Sign Up", Message: msg, Color: "Gold", Icon: "exclamation-triangle-fill"}
+		renderTemplate(ctx, "auth", page)
+		return
+	}
+}
+
 func postAccount(ctx *gin.Context) {
 	db, err := DBConn()
 	msg := ""
 
 	if err != nil {
 		msg =  err.Error()
-		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg}
+		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg, Color: "Crimson", Icon: "sign-stop-fill"}
 		renderTemplate(ctx, "auth", page)
 		return
 	}
@@ -114,11 +175,11 @@ func postAccount(ctx *gin.Context) {
 	firstname := ctx.PostForm("firstname")
 	lastname := ctx.PostForm("lastname")
 	email := ctx.PostForm("email")
-	password := ctx.PostForm("password")
+	password, err := HashPassword(ctx.PostForm("password"))
  
 	if err != nil {
 		msg = err.Error()
-		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg}
+		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg, Color: "Crimson", Icon: "sign-stop-fill"}
 		renderTemplate(ctx, "auth", page)
 		return
 	}
@@ -128,12 +189,12 @@ func postAccount(ctx *gin.Context) {
 
 	if err != nil {
 		msg = err.Error()
-		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg}
+		page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg, Color: "Crimson", Icon: "sign-stop-fill"}
 		renderTemplate(ctx, "auth", page)
 		return
 	} 
 	msg = fmt.Sprintf("Account %s created successfully", email)
-	page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg}
+	page := &Data{Title: "Register page", Body: "Registration account", Path: ctx.FullPath(), Action: "Register", Message: msg, Color: "DarkBlue", Icon: "info-fill"}
 	renderTemplate(ctx, "auth", page)
 }
 
